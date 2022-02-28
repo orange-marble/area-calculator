@@ -1,11 +1,13 @@
 import Foundation
 import SwiftUI
 import Combine
+import KMPNativeCoroutinesCore
+import KMPNativeCoroutinesCombine
+
+import shared
 
 
 class ViewModel: ObservableObject {
-    static func areaCalculation(width: Double, height: Double) -> Double { width*height }
-    
     static let initialWidth = 2.0
     static let initialHeight = 3.0
     
@@ -13,10 +15,28 @@ class ViewModel: ObservableObject {
     @Published public var height = initialHeight
     @Published public var area: Double?
     
+    var subscriptions = Set<AnyCancellable>()
+    
+    
     init() {
-        Publishers.CombineLatest($width, $height)
-            .map(ViewModel.areaCalculation)
+        let calculation = AreaCalculationNative()
+        
+        func setWidth(value: Double) { calculation.setWidth(value: value) }
+        func setHeight(value: Double) { calculation.setHeight(value: value) }
+
+        createPublisher(for: calculation.areaNative)
+            .catch { _ in Empty<KotlinDouble, Never>() }
+            .map(Double.init)
+            .receive(on: DispatchQueue.main)
             .assign(to: &$area)
+
+        $width
+            .sink(receiveValue: setWidth)
+            .store(in: &self.subscriptions)
+
+        $height
+            .sink(receiveValue: setHeight)
+            .store(in: &self.subscriptions)
     }
 }
 

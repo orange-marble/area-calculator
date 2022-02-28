@@ -51,7 +51,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 
 dependencies {
-//    implementation(project(":shared"))
+    implementation(project(":shared"))
 
     with (Compose) {
         implementation(compiler)
