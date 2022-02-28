@@ -2,16 +2,15 @@ import SwiftUI
 
 
 struct ContentView: View {
-    @State var width = 2.0
-    @State var height = 3.0
+    @StateObject private var viewModel = ViewModel()
 
     var body: some View {
-        let area = width*height
-        
         VStack {
-            LengthView(label: "Width", sliderValue: $width)
-            LengthView(label: "Height", sliderValue: $height)
-            Text("Area: \(area)").padding()
+            LengthView(label: "Width", sliderValue: $viewModel.width)
+            LengthView(label: "Height", sliderValue: $viewModel.height)
+            viewModel.area.map {
+                Text("Area: \($0)").padding()
+            }
         }
     }
 }
