@@ -23,8 +23,8 @@ fun ContentView(
     Column {
         LengthView("Width", width, viewModel.setWidth)
         LengthView("Height", height, viewModel.setHeight)
-        if (area != null) {
-            Text(text = "Area: $area", modifier = Modifier.padding(16.dp))
+        area?.let {
+            Text(text = "Area: $it", modifier = Modifier.padding(16.dp))
         }
     }
 }
